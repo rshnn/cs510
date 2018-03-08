@@ -1,7 +1,16 @@
 
 function runge(n,a, b, f_index)
     %Function that shows the Runge phenomena
+    %
+    % The Polynomial interpolation of f(x) =1/(1 +10 * x^2)
+    % on equal distributed n nodes on [-1 1]
+    % causes extreme variation near the ends
+    % as n increases
+    %INPUT n the # of equally distributed nodes in [-1 1]
     close all
+
+
+    
     x=a:0.02:b; % mesh points on [a b] used for plotting
 
     switch f_index
@@ -15,10 +24,9 @@ function runge(n,a, b, f_index)
     
     % just plot to see the function.  
     figure;
-    subplot(2, 2, 1);     grid on; 
+    subplot(2, 1, 1);
     plot(x,y, 'm', 'LineWidth', 1.25); % a plot of f
-    subplot(2, 2, 3);    grid on;  
-    plot(x,y, 'm', 'LineWidth', 1.25); % a plot of f
+
 
     % Get evenly spaced set of points on the function.  This builds the input dataset.     
     % Basic interpolation.  Evenly spaced points.  
@@ -39,42 +47,35 @@ function runge(n,a, b, f_index)
     end
         
     
-    subplot(2, 2, 1); grid on; hold on;
+    
+    hold on
+    grid on
     plot(xp,yp,'o') %plotting the data points on the graph of f
+    plot(xch, ych, 'k^');
+    
     C=polyfit(xp,yp,n-1); %computes the coefficients of P_{n-1}
     Interp=polyval(C,x); %evaluates the Interpolant P_{n-1} at the mesh points
     plot(x,Interp,'r--', 'LineWidth', 2);
-    
-    xlabel('x-axis');
-    ylabel('y-axis');
-    title(sprintf('Interp with n= %d of f(x)= %s; evenly-spaced', n, fname), 'fontsize', 14);
-    legend({'f(x)','x_i even-spacing','P_{evensp}'},'fontsize',10,'Location','southwest'); 
-
-    
-    % Chebyshev plotting 
-    subplot(2, 2, 3); grid on; hold on;
-    plot(xch, ych, 'k^');
+       
+    subplot(2, 1, 2)
     Cheb=polyfit(xch, ych, n-1);
     InterCh = polyval(Cheb, x);
-    plot(x, InterCh, 'k--', 'LineWidth', 2);
-
+    plot(x, InterCh, 'k--');
+    
+    
     xlabel('x-axis');
     ylabel('y-axis');
-    title(sprintf('Interp with n= %d of f(x)= %s; Chebyshev nodes', n, fname), 'fontsize', 14);
-    legend({'f(x)','x_i cheb-nodes','P_{cheb}'},'fontsize',10,'Location','southwest'); 
-
+    %title(['Interpolation with n=' num2str(n) ', ' 'of fn ' fname ' ' ],'fontsize',14); 
     
+    title(sprintf('Interpolation with n= %d of f(x)= %s ', n, fname), 'fontsize', 14);
+    legend({'f(x)','x_i','Interpolated','error'},'fontsize',14,'Location','southwest'); 
+
     
     % Calculating error    
     err = Interp-y;
-    errch = InterCh-y;
-    
-    subplot(2, 2, [2,4]);
+    subplot(3, 1, 2)
     plot(x, abs(err), 'g', 'LineWidth', 2)
-    hold on;
-    plot(x, abs(errch), 'c', 'LineWidth', 2);
     title('abs(Error)', 'fontsize', 14);
-    legend({'evenly-spaced', 'Chebyshev Nodes'}, 'fontsize',10, 'Location', 'northwest');
     grid on;
     
     
